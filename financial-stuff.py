@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import csv
-import datetime
 import sys
 
 class PostingDate:
@@ -25,6 +24,7 @@ class PostingDate:
         day = int(date_stripped[1])
         return day
 
+
 def transactions(csv_file: str) -> list:
     transactions = []
     with open(csv_file, 'r') as f:
@@ -40,48 +40,40 @@ def filter_by_year(transactions: list, target_year: int) -> list:
             filtered_transactions.append(transaction)
     return filtered_transactions
 
-def filterPostingMonth(csv_file: str, month: int) -> list:
-    filteredTransactions = []
-    with open(csv_file, 'r') as f:
-        transactions = csv.DictReader(f)
-        for transaction in transactions:
-            if month == postingMonth(record['Posting Date']):
-                filteredTransactions.append(transaction)
-    return filteredTransactions
+def filter_by_month(transactions: list, month: int) -> list:
+    filtered_transactions = []
+    for transaction in transactions:
+        if month == PostingDate(transaction['Posting Date']).month:
+            filtered_transactions.append(transaction)
+    return filtered_transactions
 
-def filterPostingDay(csv_file: str, day: int) -> list:
-    filteredTransactions = []
-    with open(csv_file, 'r') as f:
-        transactions = csv.DictReader(f)
-        for transaction in transactions:
-            if day == postingDay(record['Posting Date']):
-                filteredTransactions.append(transaction)
-    return filteredTransactions
+def filter_by_day(transactions: list, day: int) -> list:
+    filtered_transactions = []
+    for transaction in transactions:
+        if day == PostingDate(transaction['Posting Date']).day:
+            filtered_transactions.append(transaction)
+    return filtered_transactions
 
-def filterPayments(csv_file: str, query: str) -> list:
-    payments = []
-    with open(csv_file, 'r') as f:
-        transactions = csv.DictReader(f)
-        for transaction in transactions:
-            if query in transaction['Description']:
-                payments.append(transaction)
-    return payments
+def filter_by_description(transactions: list, description: str) -> list:
+    filtered_transactions = []
+    for transaction in transactions:
+        if description in transaction['Description']:
+            filtered_transactions.append(transaction)
+    return filtered_transactions
 
-def printFilterPayments(financials_list: list, query: str) -> None:
-    '''printFilterPayments takes in the same parameters as filterPayments but iterates through the list and prints the transcations that satify the specified query'''
-    for record in financials_list:
-        if query in record['Description']:
-            print(record)
+def print_transactions(transactions: list) -> None:
+    for transaction in transactions:
+        print(transaction)
 
 
 
 
 if __name__ == '__main__':
     csv_file = sys.argv[1]
-    x = transactions(csv_file)
-    date = PostingDate('08/08/2022')
-    print(date.year)
-    print(date.month)
-    print(date.day)
-    y = filter_by_year(x, 2022)
-    print(y)
+    transactions_list = transactions(csv_file)
+    year = filter_by_year(transactions_list, 2022)
+    print_transactions(year)
+    month = filter_by_month(transactions_list, 8)
+    print_transactions(month)
+    day = filter_by_day(transactions_list, 13)
+    print_transactions(day)
